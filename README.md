@@ -12,9 +12,10 @@ The app was designed with user-friendly UI elements and a color palette inspired
 
 ## 🚀 Demo Links
 
-- **Frontend (Live on Vercel):** [https://resource-manager-frontend.vercel.app](https://resource-manager-frontend.vercel.app)  
+- **Frontend (Live on Vercel):** https://resource-manager-frontend-eight.vercel.app/
 - **Backend (Live on Render):** [https://resource-manager-backend.onrender.com](https://resource-manager-backend.onrender.com)
 
+DEMO : https://docs.google.com/document/d/1qtz72kMIDopxHC-1m4wxnil9qEUGsfoItHUJ982oo8c/edit?usp=sharing  
 ---
 
 ## 🔐 Login Credentials
