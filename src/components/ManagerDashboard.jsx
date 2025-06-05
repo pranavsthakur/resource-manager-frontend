@@ -178,7 +178,7 @@ export default function ManagerDashboard() {
       </section>
 
       <section className="mt-24 px-6 md:px-16">
-        <h2 className="text-3xl font-bold mb-6">Results We Made Possible</h2>
+        <h2 className="text-3xl font-bold mb-6">Current Assignments and Capacity</h2>
         {engineers.map((eng) => {
           const engAssignments = assignments.filter(
             (a) => a.engineerId._id === eng._id
