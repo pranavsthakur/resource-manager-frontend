@@ -11,11 +11,15 @@ export default function EngineerDashboard({ user }) {
 
   // 1. Fetch engineer profile
   useEffect(() => {
-    fetch(`http://localhost:5000/api/engineers/${user.id}`)
+    fetch(`http://localhost:5000/api/engineers/username/${user.username}`, {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => setProfile(data))
       .catch(() => console.error("Failed to load engineer profile"));
-  }, [user.id]);
+  }, [user.username, user.token]);
 
   // 2. Fetch assignments & projects locally
   useEffect(() => {
@@ -31,11 +35,26 @@ export default function EngineerDashboard({ user }) {
   const saveProfile = () => {
     fetch(`http://localhost:5000/api/engineers/${user.id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`, // ✅ Auth header
+      },
       body: JSON.stringify(profile),
     })
       .then((res) => res.json())
-      .then(() => setEditMode(false))
+      .then(() => {
+        // ✅ Re-fetch the updated profile
+        fetch(`http://localhost:5000/api/engineers/${user.id}`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            setProfile(data);
+            setEditMode(false);
+          });
+      })
       .catch(() => alert("Failed to save changes"));
   };
 
@@ -43,7 +62,8 @@ export default function EngineerDashboard({ user }) {
 
   // 3. Filter engineer-specific assignments
   const myAssignments = assignments.filter(
-    (a) => a.engineerId?._id === user.id || a.engineerId === user.id
+    (a) =>
+      a.engineerId?.username === user.username || a.engineerId === user.username
   );
 
   const uniqueAssignments = Array.from(

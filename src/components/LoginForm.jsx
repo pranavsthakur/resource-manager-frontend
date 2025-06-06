@@ -2,7 +2,15 @@ import { useState, useEffect } from "react";
 import { FaUserTie, FaUserCog } from "react-icons/fa";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 
-const InputField = ({ id, label, type = "text", value, onChange, error, onKeyDown }) => (
+const InputField = ({
+  id,
+  label,
+  type = "text",
+  value,
+  onChange,
+  error,
+  onKeyDown,
+}) => (
   <div className="relative">
     <input
       type={type}
@@ -69,7 +77,7 @@ export default function LoginForm({ onLogin }) {
     setLoading(true);
     setError(false);
 
-    fetch("http://localhost:5000/api/login", {
+    fetch(`${import.meta.env.VITE_API_URL}/api/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password, role: selectedRole }),
@@ -79,7 +87,7 @@ export default function LoginForm({ onLogin }) {
         return res.json();
       })
       .then((data) => {
-        onLogin(data.user);
+        onLogin({ ...data.user, token: data.token }); // ✅ updated to include token
       })
       .catch(() => {
         setError(true);
@@ -92,12 +100,16 @@ export default function LoginForm({ onLogin }) {
       <div className="flex flex-col md:flex-row w-full max-w-5xl rounded-2xl shadow-2xl overflow-hidden bg-white/80 backdrop-blur-md">
         <div className="hidden md:flex md:w-1/2 bg-[#3A3A3C] text-white flex-col justify-center items-center p-8">
           <h1 className="text-3xl font-bold mb-3">Resource Manager</h1>
-          <p className="text-gray-300 text-center text-sm">Plan. Assign. Optimize.</p>
+          <p className="text-gray-300 text-center text-sm">
+            Plan. Assign. Optimize.
+          </p>
         </div>
 
         <div className="w-full md:w-1/2 p-8 bg-[#FFFDFB]">
           <h2 className="text-2xl font-bold text-[#3A3A3C] mb-1">Welcome</h2>
-          <p className="text-sm text-[#7C7C7C] mb-4">Login to access your dashboard</p>
+          <p className="text-sm text-[#7C7C7C] mb-4">
+            Login to access your dashboard
+          </p>
 
           <div className="flex justify-center gap-4 mb-2">
             {["Engineer", "Manager"].map((role) => (
@@ -119,7 +131,10 @@ export default function LoginForm({ onLogin }) {
             <span className="font-semibold text-[#D72638]">{selectedRole}</span>
           </p>
 
-          <form onSubmit={handleSubmit} className={`space-y-4 ${error ? "animate-shake" : ""}`}>
+          <form
+            onSubmit={handleSubmit}
+            className={`space-y-4 ${error ? "animate-shake" : ""}`}
+          >
             <InputField
               id="username"
               label="Username"
@@ -149,7 +164,10 @@ export default function LoginForm({ onLogin }) {
             </div>
 
             {error && (
-              <p className="text-red-600 text-sm text-center" aria-live="polite">
+              <p
+                className="text-red-600 text-sm text-center"
+                aria-live="polite"
+              >
                 Invalid credentials or role mismatch.
               </p>
             )}
