@@ -11,7 +11,9 @@ export default function EngineerDashboard({ user }) {
 
   // 1. Fetch engineer profile
   useEffect(() => {
-    fetch(`http://localhost:5000/api/engineers/username/${user.username}`, {
+    const base = import.meta.env.VITE_API_URL;
+
+    fetch(`${base}/api/engineers/username/${user.username}`, {
       headers: {
         Authorization: `Bearer ${user.token}`,
       },
@@ -21,42 +23,17 @@ export default function EngineerDashboard({ user }) {
       .catch(() => console.error("Failed to load engineer profile"));
   }, [user.username, user.token]);
 
-  // 2. Fetch assignments & projects locally
   useEffect(() => {
-    fetch("http://localhost:5000/api/assignments")
+    const base = import.meta.env.VITE_API_URL;
+
+    fetch(`${base}/api/assignments`)
       .then((res) => res.json())
       .then((data) => setAssignments(data));
 
-    fetch("http://localhost:5000/api/projects")
+    fetch(`${base}/api/projects`)
       .then((res) => res.json())
       .then((data) => setProjects(data));
   }, []);
-
-  const saveProfile = () => {
-    fetch(`http://localhost:5000/api/engineers/${user.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`, // ✅ Auth header
-      },
-      body: JSON.stringify(profile),
-    })
-      .then((res) => res.json())
-      .then(() => {
-        // ✅ Re-fetch the updated profile
-        fetch(`http://localhost:5000/api/engineers/${user.id}`, {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            setProfile(data);
-            setEditMode(false);
-          });
-      })
-      .catch(() => alert("Failed to save changes"));
-  };
 
   if (!profile) return <div className="text-white p-10">Loading...</div>;
 
@@ -84,6 +61,33 @@ export default function EngineerDashboard({ user }) {
 
   const getCapacityColor = (cap) =>
     cap <= 50 ? "bg-green-500" : cap <= 80 ? "bg-yellow-400" : "bg-red-500";
+
+  const saveProfile = () => {
+    const base = import.meta.env.VITE_API_URL;
+
+    fetch(`${base}/api/engineers/${user.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
+      body: JSON.stringify(profile),
+    })
+      .then((res) => res.json())
+      .then(() => {
+        fetch(`${base}/api/engineers/${user.id}`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            setProfile(data);
+            setEditMode(false);
+          });
+      })
+      .catch(() => alert("Failed to save changes"));
+  };
 
   return (
     <div className="min-h-screen bg-black text-white font-sans px-6 md:px-24 py-10">

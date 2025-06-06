@@ -11,9 +11,11 @@ export default function AssignmentManager() {
   });
 
   const fetchAll = async () => {
-    const engRes = await fetch("http://localhost:5000/api/engineers");
-    const projRes = await fetch("http://localhost:5000/api/projects");
-    const assignRes = await fetch("http://localhost:5000/api/assignments");
+    const base = import.meta.env.VITE_API_URL;
+
+    const engRes = await fetch(`${base}/api/engineers`);
+    const projRes = await fetch(`${base}/api/projects`);
+    const assignRes = await fetch(`${base}/api/assignments`);
 
     setEngineers(await engRes.json());
     setProjects(await projRes.json());
@@ -30,20 +32,29 @@ export default function AssignmentManager() {
 
   const handleAssign = async (e) => {
     e.preventDefault();
-    await fetch("http://localhost:5000/api/assignments", {
+
+    const base = import.meta.env.VITE_API_URL;
+
+    await fetch(`${base}/api/assignments`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...form, capacity: Number(form.capacity) }),
     });
+
     setForm({ engineerId: "", projectId: "", capacity: 0 });
     fetchAll();
   };
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4 text-[#3A3A3C]">Assignment Manager</h2>
+      <h2 className="text-2xl font-bold mb-4 text-[#3A3A3C]">
+        Assignment Manager
+      </h2>
 
-      <form onSubmit={handleAssign} className="space-y-4 mb-6 bg-white p-4 rounded-md shadow">
+      <form
+        onSubmit={handleAssign}
+        className="space-y-4 mb-6 bg-white p-4 rounded-md shadow"
+      >
         <select
           name="engineerId"
           value={form.engineerId}
@@ -94,7 +105,9 @@ export default function AssignmentManager() {
         </button>
       </form>
 
-      <h3 className="text-lg font-semibold mb-2 text-[#3A3A3C]">Current Assignments</h3>
+      <h3 className="text-lg font-semibold mb-2 text-[#3A3A3C]">
+        Current Assignments
+      </h3>
       <ul className="bg-white rounded shadow divide-y">
         {assignments.map((a) => (
           <li key={a._id} className="p-3 text-sm">
